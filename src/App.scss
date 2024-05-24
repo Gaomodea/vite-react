@@ -1,0 +1,138 @@
+
+.comment-header {
+  display: flex;
+  margin-bottom: 20px;
+  padding-top: 20px;
+}
+
+.comment-title {
+  font-size: 40px;
+  line-height: 40px;
+  flex-shrink: 0;
+  margin-right: 20px;
+  margin-left: -100px;
+}
+
+.comment-search {
+  flex: 1;
+}
+
+.comment-sort {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #ccc;
+  user-select: none;
+  margin-bottom: 20px;
+
+  &__item {
+    cursor: pointer;
+
+    &:not(:last-of-type)::after {
+      content: '|';
+      font-size: 14px;
+      padding: 0 16px;
+      color: #ccc;
+    }
+
+    &.active {
+      color: blue;
+    }
+  }
+}
+
+.comment-form {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  height: 40px;
+  overflow: hidden;
+  line-height: 40px;
+  font-size: 16px;
+
+  &__input {
+    border: 0;
+    outline: 0;
+    padding: 10px 20px;
+    flex: 1;
+    box-sizing: border-box;
+  }
+
+  &__btn {
+    flex-shrink: 0;
+    border: 0;
+    outline: 0;
+    height: 40px;
+    padding: 0 20px;
+    cursor: pointer;
+  }
+}
+
+.comment-container {
+  width: 500px;
+  margin: 0 auto;
+}
+
+.comment-item {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 8px;
+  display: flex;
+
+  &__avatar {
+    width: 36px;
+    height: 36px;
+    display: block;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-right: 10px;
+    padding: 10px 0;
+  }
+
+  &__info {
+    flex: 1;
+    overflow: hidden;
+  }
+
+  &__nick {
+    font-weight: bold;
+    font-size: 28px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 4px;
+  }
+
+  &__comment {
+    font-size: 20px;
+    color: #999;
+    margin-bottom: 10px;
+    word-break: break-all;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  &__time {
+    color: #999;
+  }
+
+  &__btn {
+    cursor: pointer;
+    color: #666;
+    padding: 0 10px;
+    display: inline-block;
+    user-select: none;
+
+    &:active {
+      transform: scale(1.5);
+    }
+  }
+}
