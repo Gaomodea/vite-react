@@ -1,41 +1,12 @@
 
-import { useState } from 'react'
+import classNames from 'classnames'
+import { FormEvent, useState } from 'react'
 import './App.scss'
+import CommentItem, { Id } from './CommentItem'
+import EffectComponent from './EffectComponent'
+import useGetComments, { getSortedComments } from './useGetComments'
 
 const src = 'https://img1.baidu.com/it/u=3840978109,786281139&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1716570000&t=9af7899847421cd8c1930b700a42324f'
-
-const list = [
-  {
-    id: 1,
-    src,
-    nick: 'Daniel',
-    uid: 1,
-    comment: '这位女生好漂亮啊！',
-    time: '2024-05-22 12:12:12',
-    like: 0,
-    delete: false
-  },
-  {
-    id: 2,
-    src,
-    nick: 'Jack',
-    uid: 2,
-    comment: '这位女生好漂亮啊！嗯咯',
-    time: '2024-05-23 12:12:12',
-    like: 2,
-    delete: false
-  },
-  {
-    id: 3,
-    src,
-    uid: 3,
-    nick: 'Moze',
-    comment: '这位女生好漂亮啊！哈哈',
-    time: '2024-05-24 12:12:12',
-    like: 4,
-    delete: false
-  }
-]
 
 const user = {
   uid: 1,
@@ -47,43 +18,9 @@ const tabs = [
   { type: 'hot', text: '最热' }
 ]
 
-type Comment = typeof list[number]
-type Id = Comment['id']
-
-interface CommentItemProps {
-  comment: Comment;
-  onDelete(id: Id): void;
-  showDelete: boolean;
-}
-
-function CommentItem ({ comment, onDelete, showDelete } : CommentItemProps) {
-  // comment = comment || ({}) as Comment
-
-  return (
-    <div className="comment-item">
-      {/* 头像 */}
-      <img className="comment-item__avatar" src={comment.src} />
-
-      <div className="comment-item__info">
-        {/* 昵称 */}
-        <div className='comment-item__nick'>{comment.nick}</div>
-        {/* 评论 */}
-        <div className='comment-item__comment'>{comment.comment}</div>
-        {/* 时间 */}
-        <div className='comment-item__footer'>
-          <span className='comment-item__time'>{comment.time}</span>
-          <div>
-            <span className='comment-item__btn'>点赞（{comment.like}）</span>
-            { showDelete && <span className='comment-item__btn' onClick={() => onDelete(comment.id)}>删除</span> }
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export default function App () {
-  const [comments, setComments] = useState(list)
+  const [activeTabType, setActiveTabType] = useState(tabs[0].type)
+  const { comments, setComments } = useGetComments(activeTabType)
 
   function handleDelete (id: Id) {
     const newComments = comments.map(item => {
@@ -99,7 +36,38 @@ export default function App () {
       }
     })
 
-    setComments(() => newComments)
+    setComments(newComments)
+  }
+
+  function handleClickTab(item: any) {
+    setActiveTabType(item.type)
+    setComments(getSortedComments(comments, item.type))
+  }
+
+  const [content, setContent] = useState('')
+  const [id, setId] = useState(4)
+
+  function handleSubmit (e: FormEvent) {
+    e.preventDefault()
+
+    if (!content) {
+      return
+    }
+    
+    const list = [...comments]
+    list.push({
+      id: id,
+      src,
+      uid: user.uid,
+      nick: user.name,
+      comment: content,
+      time: new Date().toLocaleString(),
+      like: 0,
+      delete: false
+    })
+    setComments(getSortedComments(list, activeTabType))
+    setContent('')
+    setId(n => n + 1)
   }
 
   return (
@@ -108,10 +76,17 @@ export default function App () {
         <div className='comment-title'>评论</div>
         <div className='comment-search'>
           <div className='comment-sort'>
-            {tabs.map(item => <span key={item.type} className='comment-sort__item '>{item.text}</span>)}
+            {tabs.map(item => <span 
+              key={item.type} 
+              className={classNames({
+                'comment-sort__item': true,
+                'active': item.type === activeTabType
+              })}
+              onClick={() => handleClickTab(item)}
+            >{item.text}</span>)}
           </div>
-          <form className='comment-form'>
-            <input className='comment-form__input' />
+          <form className='comment-form' onSubmit={handleSubmit}>
+            <input className='comment-form__input' value={content} onChange={(e) => setContent(e.target.value)}/>
             <button className='comment-form__btn'>评论</button>
           </form>
         </div>
@@ -130,6 +105,8 @@ export default function App () {
             ))
         }
       </div>
+
+      <EffectComponent />
     </div>
   )
 }
